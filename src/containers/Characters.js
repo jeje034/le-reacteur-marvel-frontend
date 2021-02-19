@@ -5,9 +5,10 @@ import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 
 import NavigationBar from "../components/NavigationBar";
+import { Link } from "react-router-dom";
 
 let numberOfCharactersToSkip = 0;
-let totalNumberOfCharcters = 0;
+let totalNumberOfCharacters = 0;
 
 const Characters = ({ baseUrl }) => {
     let oneColumnDisplay = useMediaQuery({ maxWidth: 1200 });
@@ -23,7 +24,7 @@ const Characters = ({ baseUrl }) => {
     const [isDownloadingOtherTimes, setIsDownloadingOtherTimes] = useState(
         false
     );
-    const [characters, setcharacters] = useState([]);
+    const [characters, setCharacters] = useState([]);
 
     const maxNumberOfCharactersPerPage = 100;
 
@@ -36,12 +37,12 @@ const Characters = ({ baseUrl }) => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(getUrl());
-                totalNumberOfCharcters = response.data.count;
-                setcharacters(response.data.results);
+                totalNumberOfCharacters = response.data.count;
+                setCharacters(response.data.results);
                 setIsDownloadingFirstTime(false);
             } catch (error) {
                 console.log("An error occured :", error.message);
-                setcharacters([]);
+                setCharacters([]);
             }
         };
         fetchData();
@@ -58,7 +59,7 @@ const Characters = ({ baseUrl }) => {
             if (
                 numberOfCharactersToSkip +
                     numberOfPagesToAdd * maxNumberOfCharactersPerPage <=
-                totalNumberOfCharcters
+                totalNumberOfCharacters
             ) {
                 numberOfCharactersToSkip +=
                     numberOfPagesToAdd * maxNumberOfCharactersPerPage;
@@ -69,17 +70,17 @@ const Characters = ({ baseUrl }) => {
                 //msgjs21 griser bouton précédent et voir aussi pour suivant
             }
 
-            console.log(
-                "numberOfCharactersToSkip after",
-                numberOfCharactersToSkip
-            );
+            // console.log(
+            //     "numberOfCharactersToSkip after",
+            //     numberOfCharactersToSkip
+            // );
             const response = await axios.get(getUrl());
 
-            setcharacters(response.data.results);
+            setCharacters(response.data.results);
             setIsDownloadingOtherTimes(false);
         } catch (error) {
             console.log("An error occured :", error.message);
-            setcharacters([]);
+            setCharacters([]);
         }
     };
 
@@ -117,7 +118,7 @@ const Characters = ({ baseUrl }) => {
                     <h1>Personnages</h1>
 
                     {isDownloadingOtherTimes && (
-                        <div class-name="characters-is-downloading-other-times">
+                        <div className="characters-is-downloading-other-times">
                             Chargement en cours...
                         </div>
                     )}
@@ -131,33 +132,62 @@ const Characters = ({ baseUrl }) => {
                     >
                         {characters.map((character, index) => {
                             return (
-                                <div
-                                    key={character._id}
-                                    className={getCardsClassName(index)}
+                                <Link
+                                    to={`/comics`}
+                                    style={{
+                                        textDecoration: "none",
+                                        color: "black",
+                                    }}
                                 >
                                     <div
-                                        className={
-                                            mobileDisplay
-                                                ? "characters-around-image-mobile"
-                                                : "characters-around-image"
-                                        }
+                                        key={character._id}
+                                        className={getCardsClassName(index)}
                                     >
-                                        <img
+                                        {mobileDisplay && (
+                                            <div className="characters-name">
+                                                {character.name}
+                                            </div>
+                                        )}
+
+                                        <div
                                             className={
                                                 mobileDisplay
-                                                    ? "characters-image characters-image-mobile"
-                                                    : "characters-image"
+                                                    ? "characters-around-image-mobile"
+                                                    : "characters-around-image"
                                             }
-                                            src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
-                                            alt={character.name}
-                                        />
-                                    </div>
+                                        >
+                                            <img
+                                                className={
+                                                    mobileDisplay
+                                                        ? "characters-image characters-image-mobile"
+                                                        : "characters-image"
+                                                }
+                                                src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
+                                                alt={character.name}
+                                            />
+                                        </div>
 
-                                    <div className="characters-name-and-description">
-                                        <div>{character.name}</div>
-                                        <div>{character.description}</div>
+                                        <div
+                                            className={
+                                                mobileDisplay
+                                                    ? "characters-name-and-description characters-name-and-description-mobile"
+                                                    : "characters-name-and-description"
+                                            }
+                                        >
+                                            {/* msgjs21 pour mobile, entre autre mettre nom en haut de l'image. Voir si on réduit l'image de façon à faire une carte comme sur PC */}
+
+                                            {!mobileDisplay && (
+                                                <div className="characters-name">
+                                                    {character.name}
+                                                </div>
+                                            )}
+
+                                            <div className="characters-description">
+                                                {character.description}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             );
                         })}
                     </div>

@@ -1,13 +1,13 @@
-$characters-container-width: 1030px;
+$comics-container-width: 1030px;
 
 //Pour que ça fonctionne avec calc
 :root {
-    --characters-card-with: 500px;
-    --characters-image-size: 250px;
-    --characters-margin-right-cards: 30px;
+    --comics-card-with: 500px;
+    --comics-image-size: 250px;
+    --comics-margin-right-cards: 30px;
 }
 
-.characters-main {
+.comics-main {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,26 +16,21 @@ $characters-container-width: 1030px;
     margin-right: auto;
     //width: 340px;
     width: calc(
-        var(--characters-card-with) * 2 + var(--characters-margin-right-cards) +
-            4px
+        var(--comics-card-with) * 2 + var(--comics-margin-right-cards) + 4px
     );
     //width: 1030px;
     //border: 1px solid red;
 }
 
-characters-main a {
-    text-decoration: none;
+.comics-main-one-column {
+    width: calc(var(--comics-card-with) + 4px);
 }
-
-.characters-main-one-column {
-    width: calc(var(--characters-card-with) + 4px);
-}
-.characters-main-mobile {
+.comics-main-mobile {
     width: calc(100vw - 20px);
     //border: 1px solid red;
 }
 
-.characters-downloaded {
+.comics-downloaded {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,25 +46,25 @@ h1 {
     margin-bottom: 30px;
 }
 
-.characters-is-downloading-other-times {
+.comics-is-downloading-other-times {
     margin-bottom: 20px;
 }
 
-.characters-around-cards {
+.comics-around-cards {
     display: flex;
     flex-wrap: wrap;
 }
 
-.characters-around-cards-mobile {
+.comics-around-cards-mobile {
     display: flex;
     flex-direction: column;
     flex-wrap: inherit;
     //border: 1px solid blue;
 }
 
-.characters-card {
-    width: var(--characters-card-with);
-    height: var(--characters-image-size);
+.comics-card {
+    width: var(--comics-card-with);
+    height: var(--comics-image-size);
     display: flex;
     flex-direction: row;
     border: grey 1px solid;
@@ -77,12 +72,12 @@ h1 {
     background-color: white;
 }
 
-.characters-card-margin-right {
-    margin-right: var(--characters-margin-right-cards);
+.comics-card-margin-right {
+    margin-right: var(--comics-margin-right-cards);
     //background-color: pink;
 }
 
-.characters-card-mobile {
+.comics-card-mobile {
     display: flex;
     flex-direction: column;
     width: calc(100vw - 20px);
@@ -91,53 +86,50 @@ h1 {
     //border: 1px solid purple;
 }
 
-.characters-around-image {
-    width: var(--characters-image-size);
-    height: var(--characters-image-size);
+.comics-around-image {
+    width: var(--comics-image-size);
+    height: var(--comics-image-size);
     //border: 1px purple dotted;
 }
-.characters-around-image-mobile {
+.comics-around-image-mobile {
     width: 100vw;
     height: 100vw;
     margin-bottom: 20px;
     //border: 1px purple dotted;
 }
 
-.characters-image {
-    width: var(--characters-image-size);
-    height: var(--characters-image-size);
+.comics-image {
+    width: var(--comics-image-size);
+    height: var(--comics-image-size);
     object-fit: cover;
-    //border: 1px solid grey;
 }
 
-.characters-image-mobile {
+.comics-image-mobile {
     width: calc(100vw - 20px);
     height: 100%;
     object-fit: cover;
 }
 
-.characters-name-and-description {
-    height: var(--characters-image-size);
-    width: calc(var(--characters-card-with) - var(--characters-image-size));
+.comics-title-and-description {
+    height: var(--comics-image-size);
+    width: calc(var(--comics-card-with) - var(--comics-image-size));
     display: flex;
     flex-direction: column;
-    //border: 1px solid green;
 }
-.characters-name-and-description-mobile {
+.comics-title-and-description-mobile {
     width: inherit;
     height: inherit;
     margin-bottom: 20px;
 }
 
-.characters-name {
+.comics-title {
     text-align: center;
     margin: 20px 5px 10px 5px;
     overflow: hidden;
     font-weight: 700;
 }
 
-.characters-description {
+.comics-description {
     margin: 0 10px 0 20px;
     overflow: hidden;
-    //background-color: peru;
 }
