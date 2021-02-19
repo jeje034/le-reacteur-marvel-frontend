@@ -132,29 +132,39 @@ const Characters = ({ baseUrl }) => {
                     >
                         {characters.map((character, index) => {
                             return (
-                                <Link
-                                    to={`/comics`}
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "black",
-                                    }}
+                                <div
+                                    key={character._id}
+                                    className={getCardsClassName(index)}
                                 >
-                                    <div
-                                        key={character._id}
-                                        className={getCardsClassName(index)}
-                                    >
-                                        {mobileDisplay && (
+                                    {/* Link en 3 fois pour ne pas avoir de link dans les marges */}
+
+                                    {mobileDisplay && (
+                                        <Link
+                                            to={`/comics`}
+                                            style={{
+                                                textDecoration: "none",
+                                                color: "black",
+                                            }}
+                                        >
                                             <div className="characters-name">
                                                 {character.name}
                                             </div>
-                                        )}
+                                        </Link>
+                                    )}
 
-                                        <div
-                                            className={
-                                                mobileDisplay
-                                                    ? "characters-around-image-mobile"
-                                                    : "characters-around-image"
-                                            }
+                                    <div
+                                        className={
+                                            mobileDisplay
+                                                ? "characters-around-image-mobile"
+                                                : "characters-around-image"
+                                        }
+                                    >
+                                        <Link
+                                            to={`/comics`}
+                                            style={{
+                                                textDecoration: "none",
+                                                color: "black",
+                                            }}
                                         >
                                             <img
                                                 className={
@@ -165,8 +175,15 @@ const Characters = ({ baseUrl }) => {
                                                 src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
                                                 alt={character.name}
                                             />
-                                        </div>
-
+                                        </Link>
+                                    </div>
+                                    <Link
+                                        to={`/comics`}
+                                        style={{
+                                            textDecoration: "none",
+                                            color: "black",
+                                        }}
+                                    >
                                         <div
                                             className={
                                                 mobileDisplay
@@ -186,8 +203,8 @@ const Characters = ({ baseUrl }) => {
                                                 {character.description}
                                             </div>
                                         </div>
-                                    </div>
-                                </Link>
+                                    </Link>
+                                </div>
                             );
                         })}
                     </div>
