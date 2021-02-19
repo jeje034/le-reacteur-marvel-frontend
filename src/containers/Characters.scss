@@ -1,6 +1,4 @@
-$characters-container-width: 1030px;
-
-//Pour que ça fonctionne avec calc
+//Pour que ça fonctionne avec calc, on utilise des variables commençant par -- plutôt que des variables commençant par $
 :root {
     --characters-card-with: 500px;
     --characters-image-size: 250px;
@@ -28,7 +26,7 @@ characters-main a {
 }
 
 .characters-main-one-column {
-    width: calc(var(--characters-card-with) + 4px);
+    width: calc(var(--characters-card-with) + 2px);
 }
 .characters-main-mobile {
     width: calc(100vw - 20px);

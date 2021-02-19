@@ -10,9 +10,9 @@ let numberOfComicsToSkip = 0;
 let totalNumberOfComics = 0;
 
 const Comics = ({ baseUrl }) => {
-    let oneColumnDisplay = useMediaQuery({ maxWidth: 1200 });
+    let oneColumnDisplay = useMediaQuery({ maxWidth: 1600 });
     let mobileDisplay;
-    if (useMediaQuery({ maxWidth: 560 })) {
+    if (useMediaQuery({ maxWidth: 780 })) {
         mobileDisplay = true;
         oneColumnDisplay = false;
     } else {
@@ -166,7 +166,13 @@ const Comics = ({ baseUrl }) => {
                                         )}
 
                                         <div className="comics-description">
-                                            {comic.description}
+                                            {/* msgjs21 Vraiment à la toute fin, voir pour remplacer les <br> par des saut de lignes plutôt que "" */}
+                                            {comic.description
+                                                ? comic.description.replace(
+                                                      /<br>/g,
+                                                      ""
+                                                  )
+                                                : ""}
                                         </div>
                                     </div>
                                 </div>

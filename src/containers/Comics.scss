@@ -1,9 +1,8 @@
-$comics-container-width: 1030px;
-
-//Pour que ça fonctionne avec calc
+//Pour que ça fonctionne avec calc, on utilise des variables commençant par -- plutôt que des variables commençant par $
 :root {
-    --comics-card-with: 500px;
-    --comics-image-size: 250px;
+    --comics-card-with: 700px;
+    --comics-image-width: 190px;
+    --comics-image-height: 300px;
     --comics-margin-right-cards: 30px;
 }
 
@@ -64,7 +63,7 @@ h1 {
 
 .comics-card {
     width: var(--comics-card-with);
-    height: var(--comics-image-size);
+    height: var(--comics-image-height);
     display: flex;
     flex-direction: row;
     border: grey 1px solid;
@@ -87,8 +86,8 @@ h1 {
 }
 
 .comics-around-image {
-    width: var(--comics-image-size);
-    height: var(--comics-image-size);
+    width: var(--comics-image-width);
+    height: var(--comics-image-height);
     //border: 1px purple dotted;
 }
 .comics-around-image-mobile {
@@ -99,8 +98,8 @@ h1 {
 }
 
 .comics-image {
-    width: var(--comics-image-size);
-    height: var(--comics-image-size);
+    width: var(--comics-image-width);
+    height: var(--comics-image-height);
     object-fit: cover;
 }
 
@@ -111,8 +110,8 @@ h1 {
 }
 
 .comics-title-and-description {
-    height: var(--comics-image-size);
-    width: calc(var(--comics-card-with) - var(--comics-image-size));
+    height: var(--comics-image-height);
+    width: calc(var(--comics-card-with) - var(--comics-image-width));
     display: flex;
     flex-direction: column;
 }
