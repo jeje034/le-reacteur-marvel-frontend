@@ -28,8 +28,8 @@ const Characters = ({ baseUrl }) => {
     const maxNumberOfCharactersPerPage = 100;
 
     const getUrl = () => {
-        //return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
-        return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=3`;
+        return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
+        //return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=3`;
     };
 
     useEffect(() => {
