@@ -6,6 +6,8 @@ import { useMediaQuery } from "react-responsive";
 
 import NavigationBar from "../components/NavigationBar";
 
+import imageNotAvailable from "../assets/marvel-logo-vertical-etire.jpg";
+
 let numberOfComicsToSkip = 0;
 let totalNumberOfComics = 0;
 
@@ -147,7 +149,14 @@ const Comics = ({ baseUrl }) => {
                                                     ? "comics-image comics-image-mobile"
                                                     : "comics-image"
                                             }
-                                            src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
+                                            src={
+                                                comic.thumbnail.path ===
+                                                    "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available" ||
+                                                comic.thumbnail.path ===
+                                                    "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708"
+                                                    ? imageNotAvailable
+                                                    : `${comic.thumbnail.path}.${comic.thumbnail.extension}`
+                                            }
                                             alt={comic.name}
                                         />
                                     </div>

@@ -7,6 +7,8 @@ import { useMediaQuery } from "react-responsive";
 import NavigationBar from "../components/NavigationBar";
 import { Link } from "react-router-dom";
 
+import imageNotAvailable from "../assets/Marvel-Logo-Square.jpeg";
+
 let numberOfCharactersToSkip = 0;
 let totalNumberOfCharacters = 0;
 
@@ -172,7 +174,14 @@ const Characters = ({ baseUrl }) => {
                                                         ? "characters-image characters-image-mobile"
                                                         : "characters-image"
                                                 }
-                                                src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
+                                                src={
+                                                    character.thumbnail.path ===
+                                                        "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available" ||
+                                                    character.thumbnail.path ===
+                                                        "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708"
+                                                        ? imageNotAvailable
+                                                        : `${character.thumbnail.path}.${character.thumbnail.extension}`
+                                                }
                                                 alt={character.name}
                                             />
                                         </Link>
