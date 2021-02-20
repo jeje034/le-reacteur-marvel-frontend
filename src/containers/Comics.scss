@@ -92,7 +92,8 @@ h1 {
 }
 .comics-around-image-mobile {
     width: 100vw;
-    height: 100vw;
+    //height: 100vw;
+    height: inherit;
     margin-bottom: 20px;
     //border: 1px purple dotted;
 }
