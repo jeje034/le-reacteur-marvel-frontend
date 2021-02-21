@@ -5,7 +5,7 @@
     --characters-margin-right-cards: 30px;
     --charcters-width-for-star: 40px;
 
-    //--charcter-top-bookmark:  --characters-image-size / 2 - --charcters-width-for-star
+    //--charcter-top-bookmark:  --characters-image-size / 2 - --charcters-width-for-star / 2
     --characters-top-bookmark: 105px;
 }
 
@@ -16,12 +16,14 @@
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
-    //width: 340px;
     width: calc(
         var(--characters-card-with) * 2 + var(--characters-margin-right-cards) +
             4px
     );
-    //width: 1030px;
+
+    //margin-bottom pour que la barre de navigation ne soit pas collée au bas de la page.
+    margin-bottom: 20px;
+
     //border: 1px solid red;
 }
 
@@ -36,7 +38,7 @@ characters-main a {
     width: calc(100vw - 20px);
 
     //margin-bottom pour voir la barre de navigation.
-    margin-bottom: 40px;
+    margin-bottom: 250px;
 
     //border: 1px solid red;
 }
@@ -141,7 +143,7 @@ h1 {
     position: absolute;
     top: var(--characters-top-bookmark);
     left: 260px;
-    width: 40px;
+    width: var(--charcters-width-for-star);
 }
 .characters-name {
     text-align: center;
@@ -155,11 +157,12 @@ h1 {
 
 .characters-name-mobile {
     margin-bottom: 0;
+    margin-left: 0;
     overflow: inherit;
 }
 
 .characters-around-star-mobile {
-    height: 40px;
+    height: var(--charcters-width-for-star);
     //position: relative;
     display: flex;
     justify-content: center;

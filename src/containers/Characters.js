@@ -8,16 +8,16 @@ import Cookies from "js-cookie";
 
 import imageNotAvailable from "../assets/Marvel-Logo-Square.jpeg";
 import imageNotBookmarked from "../assets/kucb8mj1mses3sugblohufgn8u.png";
-import imageBookmarked from "../assets/russia-soviet-union-red-star-scalable-vector-graphics-file-ussr-star-wikimedia-commons-a94fd39b58f8d8c16a844a8b8a4deb34.png";
+import imageBookmarked from "../assets/star-red.png";
 
 let numberOfCharactersToSkip = 0;
 let totalNumberOfCharacters = 0;
 const cookieSeparator = "_";
 
 const Characters = ({ baseUrl }) => {
-    let oneColumnDisplay = useMediaQuery({ maxWidth: 1200 });
+    let oneColumnDisplay = useMediaQuery({ maxWidth: 1220 });
     let mobileDisplay;
-    if (useMediaQuery({ maxWidth: 560 })) {
+    if (useMediaQuery({ maxWidth: 600 })) {
         mobileDisplay = true;
         oneColumnDisplay = false;
     } else {
@@ -42,11 +42,11 @@ const Characters = ({ baseUrl }) => {
         initialBookmarks[maxNumberOfCharactersPerPage - 1] = false;
         initialBookmarks.fill(false);
 
-        let bookmarksinString = Cookies.get(
+        let bookmarksInString = Cookies.get(
             "marvel-jerome-characters-bookmarked"
         );
-        if (bookmarksinString) {
-            let bookmarksInArray = bookmarksinString.split(cookieSeparator);
+        if (bookmarksInString) {
+            let bookmarksInArray = bookmarksInString.split(cookieSeparator);
             for (let i = 0; i < characters.length; i++) {
                 if (bookmarksInArray.indexOf(characters[i]._id) >= 0) {
                     initialBookmarks[i] = true;

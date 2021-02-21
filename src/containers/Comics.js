@@ -4,14 +4,18 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
+import Cookies from "js-cookie";
 
 import NavigationBar from "../components/NavigationBar";
 
 import imageNotAvailableVertical from "../assets/marvel-logo-vertical-etire.jpg";
 import imageNotAvailableSquare from "../assets/Marvel-Logo-Square.jpeg";
+import imageNotBookmarked from "../assets/kucb8mj1mses3sugblohufgn8u.png";
+import imageBookmarked from "../assets/star-red.png";
 
 let numberOfComicsToSkip = 0;
 let totalNumberOfComics = 0;
+const cookieSeparator = "_";
 
 const Comics = ({ baseUrl }) => {
     let oneColumnDisplay = useMediaQuery({ maxWidth: 1600 });
@@ -28,6 +32,7 @@ const Comics = ({ baseUrl }) => {
         false
     );
     const [comics, setComics] = useState([]);
+    const [bookmarks, setBookmarks] = useState([]);
 
     const maxNumberOfComicsPerPage = 100;
     //const maxNumberOfComicsPerPage = 3;
@@ -44,12 +49,33 @@ const Comics = ({ baseUrl }) => {
         return `${url}/?skip=${numberOfComicsToSkip}&limit=${maxNumberOfComicsPerPage}`;
     };
 
+    const updateBookMarks = (characters) => {
+        let initialBookmarks = [];
+        initialBookmarks[maxNumberOfComicsPerPage - 1] = false;
+        initialBookmarks.fill(false);
+
+        let bookmarksInString = Cookies.get("marvel-jerome-comics-bookmarked");
+        if (bookmarksInString) {
+            let bookmarksInArray = bookmarksInString.split(cookieSeparator);
+            for (let i = 0; i < characters.length; i++) {
+                if (bookmarksInArray.indexOf(characters[i]._id) >= 0) {
+                    initialBookmarks[i] = true;
+                }
+            }
+        }
+        setBookmarks(initialBookmarks);
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(getUrl(id));
                 totalNumberOfComics = response.data.count;
                 setComics(
+                    response.data.results
+                        ? response.data.results
+                        : response.data.comics
+                );
+                updateBookMarks(
                     response.data.results
                         ? response.data.results
                         : response.data.comics
@@ -88,11 +114,62 @@ const Comics = ({ baseUrl }) => {
                     ? response.data.results
                     : response.data.comics
             );
+            updateBookMarks(
+                response.data.results
+                    ? response.data.results
+                    : response.data.comics
+            );
             setIsDownloadingOtherTimes(false);
         } catch (error) {
             console.log("An error occured :", error.message);
             setComics([]);
         }
+    };
+
+    const handleBookmarkClick = (index, comicsId) => {
+        const newBookmarks = [...bookmarks];
+        newBookmarks[index] = !bookmarks[index];
+        let cookie = Cookies.get("marvel-jerome-comics-bookmarked");
+
+        if (newBookmarks[index]) {
+            if (!cookie) {
+                cookie = comicsId;
+            } else {
+                cookie = `${cookie}${cookieSeparator}${comicsId}`;
+            }
+        } else {
+            if (cookie.indexOf(comicsId + cookieSeparator) >= 0) {
+                cookie = cookie.replace(comicsId + cookieSeparator, "");
+            } else {
+                cookie = "";
+            }
+        }
+        Cookies.set("marvel-jerome-comics-bookmarked", cookie);
+
+        setBookmarks(newBookmarks);
+    };
+
+    const getComicsNameAndBookmarkMobile = (comics, index) => {
+        return (
+            <>
+                <div className="comics-title comics-title-mobile">
+                    {comics.title}
+                </div>
+                <div className="comics-around-star-mobile">
+                    <img
+                        onClick={() => handleBookmarkClick(index, comics._id)}
+                        src={
+                            bookmarks[index]
+                                ? imageBookmarked
+                                : imageNotBookmarked
+                        }
+                        style={{
+                            width: "40px",
+                        }}
+                    />
+                </div>
+            </>
+        );
     };
 
     const getCardsClassName = (index) => {
@@ -123,7 +200,9 @@ const Comics = ({ baseUrl }) => {
             }
         >
             {isDownloadingFirstTime ? (
-                "Chargement en cours..."
+                <div className="comics-is-downloading">
+                    Chargement en cours...
+                </div>
             ) : (
                 <div className="comics-downloaded">
                     {location &&
@@ -154,11 +233,11 @@ const Comics = ({ baseUrl }) => {
                                         key={comic._id}
                                         className={getCardsClassName(index)}
                                     >
-                                        {mobileDisplay && (
-                                            <div className="comics-title">
-                                                {comic.title}
-                                            </div>
-                                        )}
+                                        {mobileDisplay &&
+                                            getComicsNameAndBookmarkMobile(
+                                                comic,
+                                                index
+                                            )}
                                         <div
                                             className={
                                                 mobileDisplay
@@ -184,6 +263,22 @@ const Comics = ({ baseUrl }) => {
                                                 }
                                                 alt={comic.name}
                                             />
+                                            {!mobileDisplay && (
+                                                <img
+                                                    className="comics-bookmark-image"
+                                                    onClick={() =>
+                                                        handleBookmarkClick(
+                                                            index,
+                                                            comic._id
+                                                        )
+                                                    }
+                                                    src={
+                                                        bookmarks[index]
+                                                            ? imageBookmarked
+                                                            : imageNotBookmarked
+                                                    }
+                                                />
+                                            )}
                                         </div>
 
                                         <div

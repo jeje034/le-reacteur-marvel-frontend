@@ -1,9 +1,13 @@
 //Pour que ça fonctionne avec calc, on utilise des variables commençant par -- plutôt que des variables commençant par $
 :root {
-    --comics-card-with: 700px;
+    --comics-card-with: 740px;
     --comics-image-width: 190px;
     --comics-image-height: 300px;
     --comics-margin-right-cards: 30px;
+    --comics-width-for-star: 40px;
+
+    //--comics-top-bookmark:  --comics-image-height / 2 - --comics-width-for-star
+    --comics-top-bookmark: 130px;
 }
 
 .comics-main {
@@ -13,11 +17,14 @@
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
-    //width: 340px;
+
     width: calc(
         var(--comics-card-with) * 2 + var(--comics-margin-right-cards) + 4px
     );
-    //width: 1030px;
+
+    //margin-bottom pour que la barre de navigation ne soit pas collée au bas de la page.
+    margin-bottom: 20px;
+
     //border: 1px solid red;
 }
 
@@ -26,6 +33,10 @@
 }
 .comics-main-mobile {
     width: calc(100vw - 20px);
+
+    //margin-bottom pour voir la barre de navigation.
+    margin-bottom: 250px;
+
     //border: 1px solid red;
 }
 
@@ -45,7 +56,7 @@ h1 {
     margin-bottom: 30px;
 }
 
-.comics-is-downloading-other-times {
+.comics-is-downloading {
     margin-bottom: 20px;
 }
 
@@ -88,10 +99,13 @@ h1 {
 .comics-around-image {
     width: var(--comics-image-width);
     height: var(--comics-image-height);
+    position: relative;
     //border: 1px purple dotted;
 }
 .comics-around-image-mobile {
     width: 100vw;
+
+    //msgjs21---------------------------------pour les characters on a peut être par erreur height: 100vw; dans characters-around-image-mobile
     //height: 100vw;
     height: inherit;
     margin-bottom: 20px;
@@ -122,16 +136,44 @@ h1 {
     margin-bottom: 20px;
 }
 
+.comics-bookmark-image {
+    position: absolute;
+    top: var(--comics-top-bookmark);
+    left: 200px;
+    width: var(--comics-width-for-star);
+}
 .comics-title {
     text-align: center;
-    margin: 20px 5px 10px 5px;
+    margin-top: 20px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    margin-left: calc(5px + var(--comics-width-for-star));
     overflow: hidden;
     font-weight: 700;
 }
 
+.comics-title-mobile {
+    margin-bottom: 0;
+    margin-left: 0;
+    overflow: inherit;
+}
+
+.comics-around-star-mobile {
+    height: var(--comics-width-for-star);
+    //position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .comics-description {
-    margin: 0 10px 0 20px;
+    margin-top: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+    margin-left: calc(20px + var(--comics-width-for-star));
     overflow: hidden;
+    //background-color: peru;
 }
 
 .comics-no-comics-found {
