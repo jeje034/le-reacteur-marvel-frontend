@@ -16,7 +16,12 @@ const Header = () => {
             <img className="header-logo" alt="Logo" src={logo} />
             <div className="header-menu">
                 <Link
-                    to="/"
+                    to={{
+                        pathname: "/",
+                        state: {
+                            onlyBookmarked: false,
+                        },
+                    }}
                     style={{
                         textDecoration: "none",
                         color: "black",
@@ -36,7 +41,7 @@ const Header = () => {
                     <div className="header-menu-item">Comics</div>
                 </Link>
                 <Link
-                    to="/"
+                    to="/bookmarks"
                     style={{
                         textDecoration: "none",
                         color: "black",

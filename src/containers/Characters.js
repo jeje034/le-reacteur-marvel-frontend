@@ -1,5 +1,6 @@
 import "./Characters.scss";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 import NavigationBar from "../components/NavigationBar";
@@ -30,9 +31,12 @@ const Characters = ({ baseUrl }) => {
     );
     const [characters, setCharacters] = useState([]);
     const [bookmarks, setBookmarks] = useState([]);
+    const [detailedBookmarks, setDetailedBookmarks] = useState([]);
 
     const maxNumberOfCharactersPerPage = 100;
     //const maxNumberOfCharactersPerPage = 4;
+
+    let location = useLocation();
 
     const getUrl = () => {
         return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
@@ -59,10 +63,40 @@ const Characters = ({ baseUrl }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(getUrl());
-                totalNumberOfCharacters = response.data.count;
-                setCharacters(response.data.results);
-                updateBookMarks(response.data.results);
+                let recordedDetailedBookmarksInString = localStorage.getItem(
+                    "marvel-jerome-detailed-characters-bookmarks"
+                );
+                let recordedDetailedBookmarks;
+
+                if (recordedDetailedBookmarksInString) {
+                    recordedDetailedBookmarks = JSON.parse(
+                        recordedDetailedBookmarksInString
+                    );
+                } else {
+                    recordedDetailedBookmarks = [];
+                }
+                setDetailedBookmarks(recordedDetailedBookmarks);
+
+                let charactersToDisplay;
+
+                if (
+                    location &&
+                    location.state &&
+                    location.state.onlyBookmarked
+                ) {
+                    console.log("onlyBookmarked " + new Date());
+                    charactersToDisplay = recordedDetailedBookmarks;
+                    console.log(charactersToDisplay.length);
+                } else {
+                    console.log("not only Bookmarked " + new Date());
+                    const response = await axios.get(getUrl());
+                    totalNumberOfCharacters = response.data.count;
+                    charactersToDisplay = response.data.results;
+                }
+
+                setCharacters(charactersToDisplay);
+                updateBookMarks(charactersToDisplay);
+
                 setIsDownloadingFirstTime(false);
             } catch (error) {
                 console.log("An error occured :", error.message);
@@ -131,25 +165,52 @@ const Characters = ({ baseUrl }) => {
         };
     };
 
-    const handleBookmarkClick = (index, charcterId) => {
+    const handleBookmarkClick = (index, character) => {
         const newBookmarks = [...bookmarks];
+        const newDetailedBookmarks = [...detailedBookmarks];
         newBookmarks[index] = !bookmarks[index];
         let cookie = Cookies.get("marvel-jerome-characters-bookmarked");
 
         if (newBookmarks[index]) {
             if (!cookie) {
-                cookie = charcterId;
+                cookie = character._id;
             } else {
-                cookie = `${cookie}${cookieSeparator}${charcterId}`;
+                cookie = `${cookie}${cookieSeparator}${character._id}`;
             }
+
+            newDetailedBookmarks.push({
+                name: character.name,
+                _id: character._id,
+                description: character.description,
+                thumbnail: character.thumbnail,
+            });
         } else {
-            if (cookie.indexOf(charcterId + cookieSeparator) >= 0) {
-                cookie = cookie.replace(charcterId + cookieSeparator, "");
+            if (cookie.indexOf(character._id + cookieSeparator) >= 0) {
+                cookie = cookie.replace(character._id + cookieSeparator, "");
             } else {
                 cookie = "";
             }
+
+            console.log(
+                "newDetailedBookmarks.length",
+                newDetailedBookmarks.length
+            );
+            for (let i = 0; i < newDetailedBookmarks.length; i++) {
+                if (newDetailedBookmarks[i]._id === character._id) {
+                    newDetailedBookmarks.splice(i, 1);
+                    console.log("splice de ", i);
+                    break;
+                }
+            }
         }
-        Cookies.set("marvel-jerome-characters-bookmarked", cookie);
+        Cookies.set("marvel-jerome-characters-bookmarked", cookie, {
+            expires: 12000,
+        });
+        setDetailedBookmarks(newDetailedBookmarks);
+        localStorage.setItem(
+            "marvel-jerome-detailed-characters-bookmarks",
+            JSON.stringify(newDetailedBookmarks)
+        );
 
         setBookmarks(newBookmarks);
     };
@@ -170,9 +231,7 @@ const Characters = ({ baseUrl }) => {
                 </Link>
                 <div className="characters-around-star-mobile">
                     <img
-                        onClick={() =>
-                            handleBookmarkClick(index, character._id)
-                        }
+                        onClick={() => handleBookmarkClick(index, character)}
                         src={
                             bookmarks[index]
                                 ? imageBookmarked
@@ -185,6 +244,14 @@ const Characters = ({ baseUrl }) => {
                 </div>
             </>
         );
+    };
+
+    const getH1 = (location) => {
+        if (location && location.state && location.state.onlyBookmarked) {
+            return <h1>Personnages favoris</h1>;
+        } else {
+            return <h1>Personnages</h1>;
+        }
     };
 
     return (
@@ -203,7 +270,7 @@ const Characters = ({ baseUrl }) => {
                 </div>
             ) : (
                 <div className="characters-downloaded">
-                    <h1>Personnages</h1>
+                    {getH1(location)}
 
                     {isDownloadingOtherTimes && (
                         <div className="characters-is-downloading">
@@ -269,7 +336,7 @@ const Characters = ({ baseUrl }) => {
                                                 onClick={() =>
                                                     handleBookmarkClick(
                                                         index,
-                                                        character._id
+                                                        character
                                                     )
                                                 }
                                                 src={

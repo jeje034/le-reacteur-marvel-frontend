@@ -144,7 +144,9 @@ const Comics = ({ baseUrl }) => {
                 cookie = "";
             }
         }
-        Cookies.set("marvel-jerome-comics-bookmarked", cookie);
+        Cookies.set("marvel-jerome-comics-bookmarked", cookie, {
+            expires: 12000,
+        });
 
         setBookmarks(newBookmarks);
     };
@@ -189,6 +191,20 @@ const Comics = ({ baseUrl }) => {
         return "comics-card";
     };
 
+    const getH1 = (location) => {
+        if (location && location.state && location.state.characterName) {
+            return <h1>{location.state.characterName} - Comics</h1>;
+        } else if (
+            location &&
+            location.state &&
+            location.state.onlyBookmarked
+        ) {
+            return <h1>Comics favoris</h1>;
+        } else {
+            return <h1>Comics</h1>;
+        }
+    };
+
     return (
         <div
             className={
@@ -205,20 +221,12 @@ const Comics = ({ baseUrl }) => {
                 </div>
             ) : (
                 <div className="comics-downloaded">
-                    {location &&
-                    location.state &&
-                    location.state.characterName ? (
-                        <h1>{location.state.characterName} - Comics</h1>
-                    ) : (
-                        <h1>Comics</h1>
-                    )}
-
+                    {getH1(location)}
                     {isDownloadingOtherTimes && (
                         <div className="comics-is-downloading-other-times">
                             Chargement en cours...
                         </div>
                     )}
-
                     <div
                         className={
                             mobileDisplay
