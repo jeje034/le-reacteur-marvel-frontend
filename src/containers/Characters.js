@@ -36,7 +36,7 @@ const Characters = ({ baseUrl }) => {
     const [detailedBookmarks, setDetailedBookmarks] = useState([]);
 
     const maxNumberOfCharactersPerPage = 100;
-    //const maxNumberOfCharactersPerPage = 4;
+    //const maxNumberOfCharactersPerPage = 2;
 
     let location = useLocation();
     let onlyBookmarked;

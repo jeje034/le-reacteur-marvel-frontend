@@ -1,0 +1,40 @@
+:root {
+    --bookmark-choice-character-image-size: 230px;
+}
+
+.bookmark-choice-main {
+    margin-bottom: 20px;
+}
+
+.bookmark-choice-one-link {
+    width: calc(var(--bookmark-choice-character-image-size) * 2 + 70px);
+    background-color: white;
+    height: 320px;
+    margin: 0 auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    //border-radius: 4px;
+}
+
+.bookmark-choice-one-link-one-column {
+    width: calc(var(--bookmark-choice-character-image-size) + 40px);
+}
+
+.bookmark-choice-title {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin: 20px 0;
+    padding-top: 20px;
+}
+
+.bookmark-aurond-images {
+    display: flex;
+    justify-content: space-around;
+}
+.bookmak-choice-image {
+    width: var(--bookmark-choice-character-image-size);
+    height: var(--bookmark-choice-character-image-size);
+    object-fit: cover;
+    border-radius: 4px;
+}
