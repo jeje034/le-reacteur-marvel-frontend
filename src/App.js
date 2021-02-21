@@ -24,9 +24,6 @@ function App() {
                 <Route path="/bookmarks">
                     <BookmarkChoice baseUrl={baseUrl} />
                 </Route>
-                <Route path="/charactersBookmarked">
-                    <Characters baseUrl={baseUrl} />
-                </Route>
                 <Route path="/">
                     <Characters baseUrl={baseUrl} />
                 </Route>

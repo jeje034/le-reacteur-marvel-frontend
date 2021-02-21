@@ -32,7 +32,12 @@ const Header = () => {
                     </div>
                 </Link>
                 <Link
-                    to="/comics"
+                    to={{
+                        pathname: "/comics",
+                        state: {
+                            onlyBookmarked: false,
+                        },
+                    }}
                     style={{
                         textDecoration: "none",
                         color: "black",

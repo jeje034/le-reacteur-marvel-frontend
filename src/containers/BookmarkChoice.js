@@ -5,7 +5,7 @@ const BookmarkChoice = ({ baseUrl }) => {
         <div>
             <Link
                 to={{
-                    pathname: "/charactersBookmarked",
+                    pathname: "/",
                     state: {
                         onlyBookmarked: true,
                     },

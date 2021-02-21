@@ -16,6 +16,8 @@ let totalNumberOfCharacters = 0;
 const cookieSeparator = "_";
 
 const Characters = ({ baseUrl }) => {
+    //console.log("deb char");
+
     let oneColumnDisplay = useMediaQuery({ maxWidth: 1220 });
     let mobileDisplay;
     if (useMediaQuery({ maxWidth: 600 })) {
@@ -37,6 +39,12 @@ const Characters = ({ baseUrl }) => {
     //const maxNumberOfCharactersPerPage = 4;
 
     let location = useLocation();
+    let onlyBookmarked;
+    if (location && location.state && location.state.onlyBookmarked) {
+        onlyBookmarked = true;
+    } else {
+        onlyBookmarked = false;
+    }
 
     const getUrl = () => {
         return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
@@ -84,11 +92,8 @@ const Characters = ({ baseUrl }) => {
                     location.state &&
                     location.state.onlyBookmarked
                 ) {
-                    console.log("onlyBookmarked " + new Date());
                     charactersToDisplay = recordedDetailedBookmarks;
-                    console.log(charactersToDisplay.length);
                 } else {
-                    console.log("not only Bookmarked " + new Date());
                     const response = await axios.get(getUrl());
                     totalNumberOfCharacters = response.data.count;
                     charactersToDisplay = response.data.results;
@@ -105,7 +110,7 @@ const Characters = ({ baseUrl }) => {
         };
 
         fetchData();
-    }, [baseUrl]);
+    }, [baseUrl, onlyBookmarked]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
@@ -191,14 +196,9 @@ const Characters = ({ baseUrl }) => {
                 cookie = "";
             }
 
-            console.log(
-                "newDetailedBookmarks.length",
-                newDetailedBookmarks.length
-            );
             for (let i = 0; i < newDetailedBookmarks.length; i++) {
                 if (newDetailedBookmarks[i]._id === character._id) {
                     newDetailedBookmarks.splice(i, 1);
-                    console.log("splice de ", i);
                     break;
                 }
             }

@@ -33,11 +33,18 @@ const Comics = ({ baseUrl }) => {
     );
     const [comics, setComics] = useState([]);
     const [bookmarks, setBookmarks] = useState([]);
+    const [detailedBookmarks, setDetailedBookmarks] = useState([]);
 
     const maxNumberOfComicsPerPage = 100;
     //const maxNumberOfComicsPerPage = 3;
     const { id } = useParams();
     let location = useLocation();
+    let onlyBookmarked;
+    if (location && location.state && location.state.onlyBookmarked) {
+        onlyBookmarked = true;
+    } else {
+        onlyBookmarked = false;
+    }
 
     const getUrl = (id) => {
         const url = `${baseUrl}/comics`;
@@ -68,18 +75,39 @@ const Comics = ({ baseUrl }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(getUrl(id));
-                totalNumberOfComics = response.data.count;
-                setComics(
-                    response.data.results
-                        ? response.data.results
-                        : response.data.comics
+                let recordedDetailedBookmarksInString = localStorage.getItem(
+                    "marvel-jerome-detailed-comics-bookmarks"
                 );
-                updateBookMarks(
-                    response.data.results
+                let recordedDetailedBookmarks;
+
+                if (recordedDetailedBookmarksInString) {
+                    recordedDetailedBookmarks = JSON.parse(
+                        recordedDetailedBookmarksInString
+                    );
+                } else {
+                    recordedDetailedBookmarks = [];
+                }
+                setDetailedBookmarks(recordedDetailedBookmarks);
+
+                let comicsToDisplay;
+
+                if (
+                    location &&
+                    location.state &&
+                    location.state.onlyBookmarked
+                ) {
+                    comicsToDisplay = recordedDetailedBookmarks;
+                    console.log(comicsToDisplay.length);
+                } else {
+                    const response = await axios.get(getUrl(id));
+                    totalNumberOfComics = response.data.count;
+                    comicsToDisplay = response.data.results
                         ? response.data.results
-                        : response.data.comics
-                );
+                        : response.data.comics;
+                }
+
+                setComics(comicsToDisplay);
+                updateBookMarks(comicsToDisplay);
                 setIsDownloadingFirstTime(false);
             } catch (error) {
                 console.log("An error occured :", error.message);
@@ -87,7 +115,7 @@ const Comics = ({ baseUrl }) => {
             }
         };
         fetchData();
-    }, [id, baseUrl]);
+    }, [id, baseUrl, onlyBookmarked]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
@@ -126,27 +154,48 @@ const Comics = ({ baseUrl }) => {
         }
     };
 
-    const handleBookmarkClick = (index, comicsId) => {
+    const handleBookmarkClick = (index, comic) => {
         const newBookmarks = [...bookmarks];
+        const newDetailedBookmarks = [...detailedBookmarks];
         newBookmarks[index] = !bookmarks[index];
         let cookie = Cookies.get("marvel-jerome-comics-bookmarked");
 
         if (newBookmarks[index]) {
             if (!cookie) {
-                cookie = comicsId;
+                cookie = comic._id;
             } else {
-                cookie = `${cookie}${cookieSeparator}${comicsId}`;
+                cookie = `${cookie}${cookieSeparator}${comic._id}`;
             }
+            console.log("push");
+            newDetailedBookmarks.push({
+                title: comic.title,
+                _id: comic._id,
+                description: comic.description,
+                thumbnail: comic.thumbnail,
+            });
+
+            console.log("newDetailedBookmarks pushé", newDetailedBookmarks);
         } else {
-            if (cookie.indexOf(comicsId + cookieSeparator) >= 0) {
-                cookie = cookie.replace(comicsId + cookieSeparator, "");
+            if (cookie.indexOf(comic._id + cookieSeparator) >= 0) {
+                cookie = cookie.replace(comic._id + cookieSeparator, "");
             } else {
                 cookie = "";
+            }
+            for (let i = 0; i < newDetailedBookmarks.length; i++) {
+                if (newDetailedBookmarks[i]._id === comic._id) {
+                    newDetailedBookmarks.splice(i, 1);
+                    break;
+                }
             }
         }
         Cookies.set("marvel-jerome-comics-bookmarked", cookie, {
             expires: 12000,
         });
+        setDetailedBookmarks(newDetailedBookmarks);
+        localStorage.setItem(
+            "marvel-jerome-detailed-comics-bookmarks",
+            JSON.stringify(newDetailedBookmarks)
+        );
 
         setBookmarks(newBookmarks);
     };
@@ -159,7 +208,7 @@ const Comics = ({ baseUrl }) => {
                 </div>
                 <div className="comics-around-star-mobile">
                     <img
-                        onClick={() => handleBookmarkClick(index, comics._id)}
+                        onClick={() => handleBookmarkClick(index, comics)}
                         src={
                             bookmarks[index]
                                 ? imageBookmarked
@@ -277,7 +326,7 @@ const Comics = ({ baseUrl }) => {
                                                     onClick={() =>
                                                         handleBookmarkClick(
                                                             index,
-                                                            comic._id
+                                                            comic
                                                         )
                                                     }
                                                     src={
@@ -325,10 +374,11 @@ const Comics = ({ baseUrl }) => {
             )}
             {comics &&
                 comics.length > 0 &&
+                !(location && location.state && location.state.characterName) &&
                 !(
                     location &&
                     location.state &&
-                    location.state.characterName
+                    location.state.onlyBookmarked
                 ) && <NavigationBar changePageFunction={changePage} />}
         </div>
     );
