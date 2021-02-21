@@ -1,6 +1,7 @@
 import "./Comics.scss";
 
 import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
 
@@ -29,18 +30,30 @@ const Comics = ({ baseUrl }) => {
     const [comics, setComics] = useState([]);
 
     const maxNumberOfComicsPerPage = 100;
+    //const maxNumberOfComicsPerPage = 3;
+    const { id } = useParams();
+    let location = useLocation();
 
-    const getUrl = () => {
-        //return `${baseUrl}/comics?skip=${numberOfComicsToSkip}&limit=${maxNumberOfComicsPerPage}`;
-        return `${baseUrl}/comics?skip=${numberOfComicsToSkip}&limit=3`;
+    const getUrl = (id) => {
+        const url = `${baseUrl}/comics`;
+
+        if (id) {
+            return `${url}/${id}`;
+        }
+
+        return `${url}/?skip=${numberOfComicsToSkip}&limit=${maxNumberOfComicsPerPage}`;
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(getUrl());
+                const response = await axios.get(getUrl(id));
                 totalNumberOfComics = response.data.count;
-                setComics(response.data.results);
+                setComics(
+                    response.data.results
+                        ? response.data.results
+                        : response.data.comics
+                );
                 setIsDownloadingFirstTime(false);
             } catch (error) {
                 console.log("An error occured :", error.message);
@@ -48,13 +61,11 @@ const Comics = ({ baseUrl }) => {
             }
         };
         fetchData();
-    }, [baseUrl]);
+    }, [id, baseUrl]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
         try {
-            console.log("numberOfComicsToSkip before", numberOfComicsToSkip);
-
             if (
                 numberOfComicsToSkip +
                     numberOfPagesToAdd * maxNumberOfComicsPerPage <=
@@ -72,7 +83,11 @@ const Comics = ({ baseUrl }) => {
             //console.log("numberOfComicsToSkip after", numberOfComicsToSkip);
             const response = await axios.get(getUrl());
 
-            setComics(response.data.results);
+            setComics(
+                response.data.results
+                    ? response.data.results
+                    : response.data.comics
+            );
             setIsDownloadingOtherTimes(false);
         } catch (error) {
             console.log("An error occured :", error.message);
@@ -111,7 +126,13 @@ const Comics = ({ baseUrl }) => {
                 "Chargement en cours..."
             ) : (
                 <div className="comics-downloaded">
-                    <h1>Comics</h1>
+                    {location &&
+                    location.state &&
+                    location.state.characterName ? (
+                        <h1>{location.state.characterName} - Comics</h1>
+                    ) : (
+                        <h1>Comics</h1>
+                    )}
 
                     {isDownloadingOtherTimes && (
                         <div className="comics-is-downloading-other-times">
@@ -126,74 +147,86 @@ const Comics = ({ baseUrl }) => {
                                 : "comics-around-cards"
                         }
                     >
-                        {comics.map((comic, index) => {
-                            return (
-                                <div
-                                    key={comic._id}
-                                    className={getCardsClassName(index)}
-                                >
-                                    {mobileDisplay && (
-                                        <div className="comics-title">
-                                            {comic.title}
-                                        </div>
-                                    )}
+                        {comics && comics.length > 0 ? (
+                            comics.map((comic, index) => {
+                                return (
                                     <div
-                                        className={
-                                            mobileDisplay
-                                                ? "comics-around-image-mobile"
-                                                : "comics-around-image"
-                                        }
+                                        key={comic._id}
+                                        className={getCardsClassName(index)}
                                     >
-                                        <img
-                                            className={
-                                                mobileDisplay
-                                                    ? "comics-image comics-image-mobile"
-                                                    : "comics-image"
-                                            }
-                                            src={
-                                                comic.thumbnail.path ===
-                                                    "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available" ||
-                                                comic.thumbnail.path ===
-                                                    "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708"
-                                                    ? mobileDisplay
-                                                        ? imageNotAvailableSquare
-                                                        : imageNotAvailableVertical
-                                                    : `${comic.thumbnail.path}.${comic.thumbnail.extension}`
-                                            }
-                                            alt={comic.name}
-                                        />
-                                    </div>
-
-                                    <div
-                                        className={
-                                            mobileDisplay
-                                                ? "comics-title-and-description comics-title-and-description-mobile"
-                                                : "comics-title-and-description"
-                                        }
-                                    >
-                                        {!mobileDisplay && (
+                                        {mobileDisplay && (
                                             <div className="comics-title">
                                                 {comic.title}
                                             </div>
                                         )}
+                                        <div
+                                            className={
+                                                mobileDisplay
+                                                    ? "comics-around-image-mobile"
+                                                    : "comics-around-image"
+                                            }
+                                        >
+                                            <img
+                                                className={
+                                                    mobileDisplay
+                                                        ? "comics-image comics-image-mobile"
+                                                        : "comics-image"
+                                                }
+                                                src={
+                                                    comic.thumbnail.path ===
+                                                        "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available" ||
+                                                    comic.thumbnail.path ===
+                                                        "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708"
+                                                        ? mobileDisplay
+                                                            ? imageNotAvailableSquare
+                                                            : imageNotAvailableVertical
+                                                        : `${comic.thumbnail.path}.${comic.thumbnail.extension}`
+                                                }
+                                                alt={comic.name}
+                                            />
+                                        </div>
 
-                                        <div className="comics-description">
-                                            {/* msgjs21 Vraiment à la toute fin, voir pour remplacer les <br> par des saut de lignes plutôt que "" */}
-                                            {comic.description
-                                                ? comic.description.replace(
-                                                      /<br>/g,
-                                                      ""
-                                                  )
-                                                : ""}
+                                        <div
+                                            className={
+                                                mobileDisplay
+                                                    ? "comics-title-and-description comics-title-and-description-mobile"
+                                                    : "comics-title-and-description"
+                                            }
+                                        >
+                                            {!mobileDisplay && (
+                                                <div className="comics-title">
+                                                    {comic.title}
+                                                </div>
+                                            )}
+
+                                            <div className="comics-description">
+                                                {/* msgjs21 Vraiment à la toute fin, voir pour remplacer les <br> par des saut de lignes plutôt que "" */}
+                                                {comic.description
+                                                    ? comic.description.replace(
+                                                          /<br>/g,
+                                                          ""
+                                                      )
+                                                    : ""}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })
+                        ) : (
+                            <div className="comics-no-comics-found">
+                                Aucun comics trouvé
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
-            <NavigationBar changePageFunction={changePage} />
+            {comics &&
+                comics.length > 0 &&
+                !(
+                    location &&
+                    location.state &&
+                    location.state.characterName
+                ) && <NavigationBar changePageFunction={changePage} />}
         </div>
     );
 };

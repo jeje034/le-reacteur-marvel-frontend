@@ -1,10 +1,29 @@
+$header-height: 61px;
+
 .header-main {
-    height: 61px;
+    height: $header-height;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     background-color: white;
 }
 .header-logo {
-    height: 40px;
+    height: 30px;
+}
+
+.header-menu {
+    display: flex;
+    align-items: center;
+}
+
+.header-menu-item {
+    line-height: $header-height;
+    padding: 0px 20px;
+}
+.header-menu-item-mobile {
+    padding: 0px -0px;
+}
+
+.header-menu-item:hover {
+    background-color: #ebedee;
 }

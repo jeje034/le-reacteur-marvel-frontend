@@ -1,8 +1,12 @@
 //Pour que ça fonctionne avec calc, on utilise des variables commençant par -- plutôt que des variables commençant par $
 :root {
-    --characters-card-with: 500px;
+    --characters-card-with: 540px;
     --characters-image-size: 250px;
     --characters-margin-right-cards: 30px;
+    --charcters-width-for-star: 40px;
+
+    //--charcter-top-bookmark:  --characters-image-size / 2 - --charcters-width-for-star
+    --characters-top-bookmark: 105px;
 }
 
 .characters-main {
@@ -30,6 +34,10 @@ characters-main a {
 }
 .characters-main-mobile {
     width: calc(100vw - 20px);
+
+    //margin-bottom pour voir la barre de navigation.
+    margin-bottom: 40px;
+
     //border: 1px solid red;
 }
 
@@ -49,7 +57,7 @@ h1 {
     margin-bottom: 30px;
 }
 
-.characters-is-downloading-other-times {
+.characters-is-downloading {
     margin-bottom: 20px;
 }
 
@@ -92,11 +100,13 @@ h1 {
 .characters-around-image {
     width: var(--characters-image-size);
     height: var(--characters-image-size);
+    position: relative;
     //border: 1px purple dotted;
 }
 .characters-around-image-mobile {
     width: 100vw;
     height: 100vw;
+    position: relative;
     margin-bottom: 20px;
     //border: 1px purple dotted;
 }
@@ -127,15 +137,41 @@ h1 {
     margin-bottom: 20px;
 }
 
+.characters-bookmark-image {
+    position: absolute;
+    top: var(--characters-top-bookmark);
+    left: 260px;
+    width: 40px;
+}
 .characters-name {
     text-align: center;
-    margin: 20px 5px 10px 5px;
+    margin-top: 20px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    margin-left: calc(5px + var(--charcters-width-for-star));
     overflow: hidden;
     font-weight: 700;
 }
 
+.characters-name-mobile {
+    margin-bottom: 0;
+    overflow: inherit;
+}
+
+.characters-around-star-mobile {
+    height: 40px;
+    //position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .characters-description {
-    margin: 0 10px 0 20px;
+    margin-top: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+    margin-left: calc(20px + var(--charcters-width-for-star));
     overflow: hidden;
     //background-color: peru;
 }

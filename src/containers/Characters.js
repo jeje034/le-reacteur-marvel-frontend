@@ -1,16 +1,18 @@
 import "./Characters.scss";
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useMediaQuery } from "react-responsive";
-
 import NavigationBar from "../components/NavigationBar";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import imageNotAvailable from "../assets/Marvel-Logo-Square.jpeg";
+import imageNotBookmarked from "../assets/kucb8mj1mses3sugblohufgn8u.png";
+import imageBookmarked from "../assets/russia-soviet-union-red-star-scalable-vector-graphics-file-ussr-star-wikimedia-commons-a94fd39b58f8d8c16a844a8b8a4deb34.png";
 
 let numberOfCharactersToSkip = 0;
 let totalNumberOfCharacters = 0;
+const cookieSeparator = "_";
 
 const Characters = ({ baseUrl }) => {
     let oneColumnDisplay = useMediaQuery({ maxWidth: 1200 });
@@ -27,12 +29,31 @@ const Characters = ({ baseUrl }) => {
         false
     );
     const [characters, setCharacters] = useState([]);
+    const [bookmarks, setBookmarks] = useState([]);
 
     const maxNumberOfCharactersPerPage = 100;
+    //const maxNumberOfCharactersPerPage = 4;
 
     const getUrl = () => {
         return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
-        //return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=3`;
+    };
+    const updateBookMarks = (characters) => {
+        let initialBookmarks = [];
+        initialBookmarks[maxNumberOfCharactersPerPage - 1] = false;
+        initialBookmarks.fill(false);
+
+        let bookmarksinString = Cookies.get(
+            "marvel-jerome-characters-bookmarked"
+        );
+        if (bookmarksinString) {
+            let bookmarksInArray = bookmarksinString.split(cookieSeparator);
+            for (let i = 0; i < characters.length; i++) {
+                if (bookmarksInArray.indexOf(characters[i]._id) >= 0) {
+                    initialBookmarks[i] = true;
+                }
+            }
+        }
+        setBookmarks(initialBookmarks);
     };
 
     useEffect(() => {
@@ -41,23 +62,20 @@ const Characters = ({ baseUrl }) => {
                 const response = await axios.get(getUrl());
                 totalNumberOfCharacters = response.data.count;
                 setCharacters(response.data.results);
+                updateBookMarks(response.data.results);
                 setIsDownloadingFirstTime(false);
             } catch (error) {
                 console.log("An error occured :", error.message);
                 setCharacters([]);
             }
         };
+
         fetchData();
     }, [baseUrl]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
         try {
-            console.log(
-                "numberOfCharactersToSkip before",
-                numberOfCharactersToSkip
-            );
-
             if (
                 numberOfCharactersToSkip +
                     numberOfPagesToAdd * maxNumberOfCharactersPerPage <=
@@ -79,6 +97,7 @@ const Characters = ({ baseUrl }) => {
             const response = await axios.get(getUrl());
 
             setCharacters(response.data.results);
+            updateBookMarks(response.data.results);
             setIsDownloadingOtherTimes(false);
         } catch (error) {
             console.log("An error occured :", error.message);
@@ -103,6 +122,71 @@ const Characters = ({ baseUrl }) => {
         return "characters-card";
     };
 
+    const getLinkWithParameter = (character) => {
+        return {
+            pathname: `/comics/${character._id}`,
+            state: {
+                characterName: character.name,
+            },
+        };
+    };
+
+    const handleBookmarkClick = (index, charcterId) => {
+        const newBookmarks = [...bookmarks];
+        newBookmarks[index] = !bookmarks[index];
+        let cookie = Cookies.get("marvel-jerome-characters-bookmarked");
+
+        if (newBookmarks[index]) {
+            if (!cookie) {
+                cookie = charcterId;
+            } else {
+                cookie = `${cookie}${cookieSeparator}${charcterId}`;
+            }
+        } else {
+            if (cookie.indexOf(charcterId + cookieSeparator) >= 0) {
+                cookie = cookie.replace(charcterId + cookieSeparator, "");
+            } else {
+                cookie = "";
+            }
+        }
+        Cookies.set("marvel-jerome-characters-bookmarked", cookie);
+
+        setBookmarks(newBookmarks);
+    };
+
+    const getCharacterNameAndBookmarkMobile = (character, index) => {
+        return (
+            <>
+                <Link
+                    to={getLinkWithParameter(character)}
+                    style={{
+                        textDecoration: "none",
+                        color: "black",
+                    }}
+                >
+                    <div className="characters-name characters-name-mobile">
+                        {character.name}
+                    </div>
+                </Link>
+                <div className="characters-around-star-mobile">
+                    <img
+                        onClick={() =>
+                            handleBookmarkClick(index, character._id)
+                        }
+                        src={
+                            bookmarks[index]
+                                ? imageBookmarked
+                                : imageNotBookmarked
+                        }
+                        style={{
+                            width: "40px",
+                        }}
+                    />
+                </div>
+            </>
+        );
+    };
+
     return (
         <div
             className={
@@ -114,13 +198,15 @@ const Characters = ({ baseUrl }) => {
             }
         >
             {isDownloadingFirstTime ? (
-                "Chargement en cours..."
+                <div className="characters-is-downloading">
+                    Chargement en cours...
+                </div>
             ) : (
                 <div className="characters-downloaded">
                     <h1>Personnages</h1>
 
                     {isDownloadingOtherTimes && (
-                        <div className="characters-is-downloading-other-times">
+                        <div className="characters-is-downloading">
                             Chargement en cours...
                         </div>
                     )}
@@ -140,19 +226,11 @@ const Characters = ({ baseUrl }) => {
                                 >
                                     {/* Link en 3 fois pour ne pas avoir de link dans les marges */}
 
-                                    {mobileDisplay && (
-                                        <Link
-                                            to={`/comics`}
-                                            style={{
-                                                textDecoration: "none",
-                                                color: "black",
-                                            }}
-                                        >
-                                            <div className="characters-name">
-                                                {character.name}
-                                            </div>
-                                        </Link>
-                                    )}
+                                    {mobileDisplay &&
+                                        getCharacterNameAndBookmarkMobile(
+                                            character,
+                                            index
+                                        )}
 
                                     <div
                                         className={
@@ -162,7 +240,7 @@ const Characters = ({ baseUrl }) => {
                                         }
                                     >
                                         <Link
-                                            to={`/comics`}
+                                            to={getLinkWithParameter(character)}
                                             style={{
                                                 textDecoration: "none",
                                                 color: "black",
@@ -185,9 +263,25 @@ const Characters = ({ baseUrl }) => {
                                                 alt={character.name}
                                             />
                                         </Link>
+                                        {!mobileDisplay && (
+                                            <img
+                                                className="characters-bookmark-image"
+                                                onClick={() =>
+                                                    handleBookmarkClick(
+                                                        index,
+                                                        character._id
+                                                    )
+                                                }
+                                                src={
+                                                    bookmarks[index]
+                                                        ? imageBookmarked
+                                                        : imageNotBookmarked
+                                                }
+                                            />
+                                        )}
                                     </div>
                                     <Link
-                                        to={`/comics`}
+                                        to={getLinkWithParameter(character)}
                                         style={{
                                             textDecoration: "none",
                                             color: "black",
@@ -219,7 +313,9 @@ const Characters = ({ baseUrl }) => {
                     </div>
                 </div>
             )}
-            <NavigationBar changePageFunction={changePage} />
+            {!isDownloadingFirstTime && !isDownloadingOtherTimes && (
+                <NavigationBar changePageFunction={changePage} />
+            )}
         </div>
     );
 };

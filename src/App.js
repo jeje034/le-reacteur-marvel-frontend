@@ -14,6 +14,9 @@ function App() {
         <Router>
             <Header />
             <Switch>
+                <Route path="/comics/:id">
+                    <Comics baseUrl={baseUrl} />
+                </Route>
                 <Route path="/comics">
                     <Comics baseUrl={baseUrl} />
                 </Route>
