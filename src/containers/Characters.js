@@ -35,6 +35,7 @@ const Characters = ({ baseUrl }) => {
     const [characters, setCharacters] = useState([]);
     const [bookmarks, setBookmarks] = useState([]);
     const [detailedBookmarks, setDetailedBookmarks] = useState([]);
+    const [searchValue, setSearchValue] = useState("");
 
     const maxNumberOfCharactersPerPage = 100;
     //const maxNumberOfCharactersPerPage = 20;
@@ -47,8 +48,16 @@ const Characters = ({ baseUrl }) => {
         onlyBookmarked = false;
     }
 
+    const handleSearchValueChange = (event) => {
+        setSearchValue(event.target.value);
+    };
     const getUrl = () => {
-        return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
+        let url = `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
+        if (searchValue) {
+            return `${url}&name=${searchValue}`;
+        } else {
+            return url;
+        }
     };
     const updateBookMarks = (characters) => {
         let initialBookmarks = [];
@@ -110,7 +119,7 @@ const Characters = ({ baseUrl }) => {
             }
         };
         fetchData();
-    }, [baseUrl, onlyBookmarked]);
+    }, [baseUrl, onlyBookmarked, searchValue]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
@@ -272,6 +281,20 @@ const Characters = ({ baseUrl }) => {
             ) : (
                 <div className="characters-downloaded">
                     {getH1(location)}
+
+                    {!onlyBookmarked && (
+                        <input
+                            className={
+                                mobileDisplay
+                                    ? "character-search-input character-search-input-mobile"
+                                    : "character-search-input"
+                            }
+                            placeholder="Personnage à chercher"
+                            type="text"
+                            value={searchValue}
+                            onChange={handleSearchValueChange}
+                        />
+                    )}
 
                     {isDownloadingOtherTimes && (
                         <div className="characters-is-downloading">

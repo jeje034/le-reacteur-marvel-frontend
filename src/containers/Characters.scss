@@ -63,6 +63,18 @@ h1 {
     margin-bottom: 20px;
 }
 
+.character-search-input {
+    width: 250px;
+    margin-bottom: 20px;
+    height: 30px;
+}
+
+.character-search-input-mobile {
+    width: 90%;
+    margin-bottom: 20px;
+    height: 30px;
+}
+
 .characters-around-cards {
     display: flex;
     flex-wrap: wrap;
