@@ -36,7 +36,7 @@ const Characters = ({ baseUrl }) => {
     const [detailedBookmarks, setDetailedBookmarks] = useState([]);
 
     const maxNumberOfCharactersPerPage = 100;
-    //const maxNumberOfCharactersPerPage = 2;
+    //const maxNumberOfCharactersPerPage = 20;
 
     let location = useLocation();
     let onlyBookmarked;
@@ -46,6 +46,12 @@ const Characters = ({ baseUrl }) => {
         onlyBookmarked = false;
     }
 
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            // behavior: "smooth",
+        });
+    };
     const getUrl = () => {
         return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
     };
@@ -108,12 +114,12 @@ const Characters = ({ baseUrl }) => {
                 setCharacters([]);
             }
         };
-
         fetchData();
     }, [baseUrl, onlyBookmarked]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
+        scrollToTop();
         try {
             if (
                 numberOfCharactersToSkip +

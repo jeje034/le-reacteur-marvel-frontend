@@ -46,6 +46,13 @@ const Comics = ({ baseUrl }) => {
         onlyBookmarked = false;
     }
 
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            // behavior: "smooth",
+        });
+    };
+
     const getUrl = (id) => {
         const url = `${baseUrl}/comics`;
 
@@ -119,6 +126,7 @@ const Comics = ({ baseUrl }) => {
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
+        scrollToTop();
         try {
             if (
                 numberOfComicsToSkip +
@@ -272,7 +280,7 @@ const Comics = ({ baseUrl }) => {
                 <div className="comics-downloaded">
                     {getH1(location)}
                     {isDownloadingOtherTimes && (
-                        <div className="comics-is-downloading-other-times">
+                        <div className="comics-is-downloading">
                             Chargement en cours...
                         </div>
                     )}
