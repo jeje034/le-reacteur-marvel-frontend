@@ -35,6 +35,7 @@ const Comics = ({ baseUrl }) => {
     const [comics, setComics] = useState([]);
     const [bookmarks, setBookmarks] = useState([]);
     const [detailedBookmarks, setDetailedBookmarks] = useState([]);
+    const [searchValue, setSearchValue] = useState("");
 
     const maxNumberOfComicsPerPage = 100;
     //const maxNumberOfComicsPerPage = 3;
@@ -47,14 +48,24 @@ const Comics = ({ baseUrl }) => {
         onlyBookmarked = false;
     }
 
+    const handleSearchValueChange = (event) => {
+        setSearchValue(event.target.value);
+    };
+
     const getUrl = (id) => {
-        const url = `${baseUrl}/comics`;
+        let url = `${baseUrl}/comics`;
 
         if (id) {
             return `${url}/${id}`;
         }
 
-        return `${url}/?skip=${numberOfComicsToSkip}&limit=${maxNumberOfComicsPerPage}`;
+        url = `${url}/?skip=${numberOfComicsToSkip}&limit=${maxNumberOfComicsPerPage}`;
+
+        if (searchValue) {
+            url += `&title=${searchValue}`;
+        }
+
+        return url;
     };
 
     const updateBookMarks = (characters) => {
@@ -116,7 +127,7 @@ const Comics = ({ baseUrl }) => {
             }
         };
         fetchData();
-    }, [id, baseUrl, onlyBookmarked]);
+    }, [id, baseUrl, onlyBookmarked, searchValue]);
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
@@ -273,11 +284,27 @@ const Comics = ({ baseUrl }) => {
             ) : (
                 <div className="comics-downloaded">
                     {getH1(location)}
+
                     {isDownloadingOtherTimes && (
                         <div className="comics-is-downloading">
                             Chargement en cours...
                         </div>
                     )}
+
+                    {!onlyBookmarked && (
+                        <input
+                            className={
+                                mobileDisplay
+                                    ? "character-search-input character-search-input-mobile"
+                                    : "character-search-input"
+                            }
+                            placeholder="Comics à chercher"
+                            type="text"
+                            value={searchValue}
+                            onChange={handleSearchValueChange}
+                        />
+                    )}
+
                     <div
                         className={
                             mobileDisplay
