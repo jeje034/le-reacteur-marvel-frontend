@@ -12,6 +12,7 @@ import imageNotAvailableVertical from "../assets/marvel-logo-vertical-etire.jpg"
 import imageNotAvailableSquare from "../assets/Marvel-Logo-Square.jpeg";
 import imageNotBookmarked from "../assets/kucb8mj1mses3sugblohufgn8u.png";
 import imageBookmarked from "../assets/star-red.png";
+import ScrollToTopOfPage from "../components/ScrollToTopOfPage";
 
 let numberOfComicsToSkip = 0;
 let totalNumberOfComics = 0;
@@ -45,13 +46,6 @@ const Comics = ({ baseUrl }) => {
     } else {
         onlyBookmarked = false;
     }
-
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            // behavior: "smooth",
-        });
-    };
 
     const getUrl = (id) => {
         const url = `${baseUrl}/comics`;
@@ -126,7 +120,7 @@ const Comics = ({ baseUrl }) => {
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
-        scrollToTop();
+        ScrollToTopOfPage();
         try {
             if (
                 numberOfComicsToSkip +

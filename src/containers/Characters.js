@@ -6,6 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import NavigationBar from "../components/NavigationBar";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import ScrollToTopOfPage from "../components/ScrollToTopOfPage";
 
 import imageNotAvailable from "../assets/Marvel-Logo-Square.jpeg";
 import imageNotBookmarked from "../assets/kucb8mj1mses3sugblohufgn8u.png";
@@ -46,12 +47,6 @@ const Characters = ({ baseUrl }) => {
         onlyBookmarked = false;
     }
 
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            // behavior: "smooth",
-        });
-    };
     const getUrl = () => {
         return `${baseUrl}/characters?skip=${numberOfCharactersToSkip}&limit=${maxNumberOfCharactersPerPage}`;
     };
@@ -119,7 +114,7 @@ const Characters = ({ baseUrl }) => {
 
     const changePage = async (numberOfPagesToAdd) => {
         setIsDownloadingOtherTimes(true);
-        scrollToTop();
+        ScrollToTopOfPage();
         try {
             if (
                 numberOfCharactersToSkip +
